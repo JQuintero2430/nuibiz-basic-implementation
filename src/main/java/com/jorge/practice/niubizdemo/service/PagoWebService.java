@@ -7,4 +7,5 @@ import reactor.core.publisher.Mono;
 public interface PagoWebService {
     public Mono<String> createAuthenticationToken(String username, String password);
     public Mono<String> createSessionToken(String authenticationToken, Long merchantId, double amount);
+    public String invokeForm(String sessionTokenJson, Long merchantId, double amount);
 }

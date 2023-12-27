@@ -39,9 +39,12 @@ public class PagoWebHandler {
 
                     return pagoWebService.createAuthenticationToken(username, password)
                             .flatMap(authenticationToken -> pagoWebService.createSessionToken(authenticationToken, merchantId, amount)
-                                    .flatMap(sessionToken -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-                                            .bodyValue(sessionToken)
-                                            .onErrorResume(e -> Mono.error(new Exception("Error: " + e.getMessage())))));
+                                    .flatMap(sessionToken -> {
+                                        String htmlResponse = pagoWebService.invokeForm(sessionToken, merchantId, amount);
+                                        return ServerResponse.ok().contentType(MediaType.TEXT_HTML)
+                                                .bodyValue(htmlResponse)
+                                                .onErrorResume(e -> Mono.error(new Exception("Error: " + e.getMessage())));
+                                    }));
                 });
     }
 }
